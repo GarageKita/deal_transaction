@@ -1,12 +1,15 @@
 const { Transactions } = require('../models');
 const CustomError = require('../middlewares/error_handler');
+const url = 'https://garagekita-db-server.herokuapp.com';
+const axios = require('axios');
 
 class Deal_Controller {
   static createDealTransaction = async (req, res, next) => {
     try {
       const { consumer_id, product_id, deal_price, deal_qty } = req.body;
       const data = { consumer_id, product_id, deal_price, deal_qty };
-      const [product] = await Transactions.getProductById(product_id);
+      const response = await axios.get(`${url}/products/${product_id}`);
+      const { data: product } = response.data;
 
       if (!product) throw new CustomError('NotFound', `Product with id ${product_id} was not found`);
 
@@ -14,8 +17,12 @@ class Deal_Controller {
 
       if (transaction) return res.status(201).json({ message: 'Transaction Created', data: transaction });
     } catch (error) {
-      console.log('error on createDealTransaction', error);
-      next(error)
+      console.log('error on createDealTransaction', error.response);
+      const { status, statusText } = error.response;
+
+      if (status === 404) next({ name: 'NotFound', message: statusText });
+      
+      next(error);
     }
   };
 
@@ -67,6 +74,49 @@ class Deal_Controller {
       next(error);
     }
   };
+
+  static updateTransaction = async(req, res, next) => {
+    try {
+      const { payment_status, request_id } = req.body;
+      const transactionId = req.params.id;
+      const response = await axios.get(`${url}/requests/${request_id}`);
+      const { data: requestData } = response.data;
+      const getTransactionById = await Transactions.findByPk(transactionId);
+
+      if (!getTransactionById) throw new CustomError('NotFound', `Transaction ID ${transactionId} was not found`);
+
+      const transaction = await Transactions.update({ payment_status, request_id }, {
+        where: { id: transactionId },
+        returning: true
+      });
+
+      if (transaction) {
+        const productId = getTransactionById.product_id;
+        const productResponse = await axios.get(`${url}/products/${productId}`);
+        const { data: product } = productResponse.data;
+        const productStockValue = product.stock - getTransactionById.deal_qty;
+        const payload = {
+          name: product.name,
+          price: product.price,
+          priceFloor: product.priceFloor,
+          image_url: product.image_url,
+          description: product.description,
+          stock: productStockValue,
+          category_id: product.category_id
+        }
+        const headers = { access_token: req.headers.access_token };
+        const updateProductStock = await axios.put(`${url}/products/${productId}`, payload, { headers });
+        const deleteRequest = await axios.delete(`${url}/requests/${requestData.id}`, { headers });
+
+        const done = await Promise.all([updateProductStock, deleteRequest]);
+
+        if(done) return res.status(200).json({ message: 'Update Success', data: transaction[1]});
+      }
+    } catch (error) {
+      console.log('error updateTransaction', error);
+      next(error);
+    }
+  }
 };
 
 module.exports = Deal_Controller

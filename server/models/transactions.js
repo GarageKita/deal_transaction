@@ -94,7 +94,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     payment_status: {
       type: DataTypes.STRING,
-    }
+      validate: {
+        isIn: {
+          args: [['awaiting', 'paid']],
+          msg: 'Attribute payment_status must between awaiting or paid'
+        }
+      }
+    },
+    request_id: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Transactions',
