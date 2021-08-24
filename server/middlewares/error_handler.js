@@ -25,7 +25,7 @@ class CustomError extends Error {
         status = 401
         break
       default:
-        console.error("Uncaught Error", err)
+        // console.error("Uncaught Error", err)
         name = "UncaughtException"
         message = "Internal Server Error"
         status = 500
