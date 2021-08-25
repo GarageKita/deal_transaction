@@ -24,6 +24,9 @@ class CustomError extends Error {
       case "JsonWebTokenError":
         status = 401
         break
+      case "MidtransError":
+        status = 500
+        break
       default:
         // console.error("Uncaught Error", err)
         name = "UncaughtException"

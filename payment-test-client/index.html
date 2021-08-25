@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script id="midtrans-script" type="text/javascript" src="https://api.midtrans.com/v2/assets/js/midtrans-new-3ds.min.js" data-environment="sandbox" data-client-key="SB-Mid-client-TPkLr9_TH34idZS9"></script>
+    <script src="./script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/picomodal/3.0.0/picoModal.js"></script>
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-TPkLr9_TH34idZS9"></script>
+</head>
+<body>
+    <div>
+        <h1>Payment Page</h1>
+    </div>
+    <div>
+        Amount: 
+        <input type="text" id="amount" placeholder="100000">
+    </div>
+    <div>
+        Backend URL 
+        <input type="text" id="backend_url" placeholder="http://localhost:3000/deals/payments/10">
+    </div>
+    <div>
+        <button id="btn-pay-cc" onclick="handleSnapPayment();">Proceed to payment</button>
+    </div>
+</body>
+</html>
