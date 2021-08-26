@@ -48,4 +48,15 @@ const snapPayment = async(amount, order_id, item_detail) => {
   return result;
 };
 
-module.exports = { creditPay, snapPayment };
+const notificationHandler = async(payload) => {
+  const apiClient = new midtransClient.Snap({
+    isProduction: false,
+    serverKey: SERVER_KEY,
+    clientKey: CLIENT_KEY
+  });
+  const result = await apiClient.transaction.notification(payload);
+  
+  return result;
+};
+
+module.exports = { creditPay, snapPayment, notificationHandler };
