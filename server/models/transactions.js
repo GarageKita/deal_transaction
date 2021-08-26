@@ -101,7 +101,10 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    request_id: DataTypes.STRING
+    request_id: DataTypes.STRING,
+    order_id: DataTypes.STRING,
+    payment_type: DataTypes.STRING,
+    disburse_status: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Transactions',

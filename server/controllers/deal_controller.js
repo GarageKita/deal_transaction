@@ -6,8 +6,8 @@ const axios = require('axios');
 class Deal_Controller {
   static createDealTransaction = async (req, res, next) => {
     try {
-      const { consumer_id, product_id, deal_price, deal_qty } = req.body;
-      const data = { consumer_id, product_id, deal_price, deal_qty };
+      const { consumer_id, product_id, deal_price, deal_qty, request_id } = req.body;
+      const data = { consumer_id, product_id, deal_price, deal_qty, request_id };
       const response = await axios.get(`${url}/products/${product_id}`);
       const { data: product } = response.data;
 
