@@ -34,8 +34,7 @@ class PaymentController {
 
   static notifyCompletePayment = async(req, res, next) => {
     try {
-      const { data } = req.body;
-      const notificationResult = await notificationHandler(data);
+      const notificationResult = await notificationHandler(req.body);
 
       console.log('this is notification from midtrans', notificationResult);
 
