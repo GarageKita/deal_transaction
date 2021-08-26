@@ -41,7 +41,7 @@ class PaymentController {
 
       return res.status(200).json({ message: "ok" });
     } catch (error) {
-      console.log('error notification');
+      console.log('error notification', error);
       next(error);
     }
   };
