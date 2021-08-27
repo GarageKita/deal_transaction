@@ -34,6 +34,31 @@ module.exports = (sequelize, DataTypes) => {
 
       return product;
     }
+
+    static async getAllTransactions(id = null) {
+      const queryParams = (id) ? 'where t.id = $id' : 'where 1=1';
+      const sql = `
+        select
+          t.id, u.email as customer_email, p.name as product_name, p.image_url, s.email as seller_email,
+          t.deal_price, t.deal_qty, t.payment_status, t.request_id, t.order_id, t.payment_type, t.disburse_status
+        from "Transactions" t
+        inner join "Users" u on u.id = t.consumer_id
+        inner join "Products" p on p.id = t.product_id
+        inner join "Users" s on s.id  = p.seller_id
+        ${queryParams}
+      `;
+      const options = (id) ? {
+        bind: { id },
+        type: QueryTypes.SELECT,
+        raw: true
+      } : {
+        type: QueryTypes.SELECT,
+        raw: true
+      };
+      const transactions = await sequelize.query(sql, options);
+
+      return transactions;
+    }
   };
   Transactions.init({
     consumer_id: {
