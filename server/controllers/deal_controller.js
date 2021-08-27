@@ -11,17 +11,23 @@ class Deal_Controller {
       const response = await axios.get(`${url}/products/${product_id}`);
       const { data: product } = response.data;
 
-      if (!product) throw new CustomError('NotFound', `Product with id ${product_id} was not found`);
+      if (!product) {
+        throw new CustomError('NotFound', `Product with id ${product_id} was not found`);
+      }
 
       const transaction = await Transactions.create(data);
 
-      if (transaction) return res.status(201).json({ message: 'Transaction Created', data: transaction });
+      if (transaction) {
+        return res.status(201).json({ message: 'Transaction Created', data: transaction });
+      }
     } catch (error) {
-      console.log('error on createDealTransaction', error.response);
       const { status, statusText } = error.response;
+      console.log('error on createDealTransaction', error.response);
 
-      if (status === 404) next({ name: 'NotFound', message: statusText });
-      
+      if (status === 404) {
+        next({ name: 'NotFound', message: statusText });
+      }
+
       next(error);
     }
   };
@@ -34,13 +40,17 @@ class Deal_Controller {
       let message = 'success';
 
       if (!params) {
-        const data = await Transactions.findAll();
+        // const data = await Transactions.findAll();
+        const data = await Transactions.getAllTransactions();
         code = 200;
         response = data;
       } else {
-        const data = await Transactions.findByPk(params);
-
-        if (!data) throw new CustomError('NotFound', `Transaction with id ${params} not found`);
+        // const data = await Transactions.findByPk(params);
+        const [data] = await Transactions.getAllTransactions(params);
+        
+        if (!data) {
+          throw new CustomError('NotFound', `Transaction with id ${params} not found`);
+        }
         
         code = 200;
         response = data;
