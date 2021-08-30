@@ -40,12 +40,10 @@ class Deal_Controller {
       let message = 'success';
 
       if (!params) {
-        // const data = await Transactions.findAll();
         const data = await Transactions.getAllTransactions();
         code = 200;
         response = data;
       } else {
-        // const data = await Transactions.findByPk(params);
         const [data] = await Transactions.getAllTransactions(params);
         
         if (!data) {
@@ -59,6 +57,18 @@ class Deal_Controller {
       return res.status(code).json({ message, data: response });
     } catch (error) {
       console.log('error getAllUserTransaction', error);
+      next(error);
+    }
+  };
+
+  static getLoggedInUserTransaction = async(req, res, next) => {
+    try {
+      const { consumer_id: userId } = req.currentState;
+      const loggedInUserTransaction = await Transactions.getLoggedInUserTransaction(userId);
+
+      res.status(200).json({ message: 'success', data: loggedInUserTransaction});
+    } catch (error) {
+      console.log('error getLoggedInUserTransaction', error);
       next(error);
     }
   };
