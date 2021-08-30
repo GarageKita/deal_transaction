@@ -39,13 +39,13 @@ module.exports = (sequelize, DataTypes) => {
       const queryParams = (id) ? 'where t.id = $id' : 'where 1=1';
       const sql = `
         select
-          t.id, u.email as customer_email, p.name as product_name, p.image_url, s.email as seller_email,
+          t.id, t.consumer_id, u.email as customer_email, p.name as product_name, p.image_url, s.email as seller_email,
           t.deal_price, t.deal_qty, t.payment_status, t.request_id, t.order_id, t.payment_type, t.disburse_status
         from "Transactions" t
-        inner join "Users" u on u.id = t.consumer_id
-        inner join "Products" p on p.id = t.product_id
-        inner join "Users" s on s.id  = p.seller_id
-        ${queryParams}
+          inner join "Users" u on u.id = t.consumer_id
+          inner join "Products" p on p.id = t.product_id
+          inner join "Users" s on s.id  = p.seller_id
+          ${queryParams}
       `;
       const options = (id) ? {
         bind: { id },
@@ -58,6 +58,27 @@ module.exports = (sequelize, DataTypes) => {
       const transactions = await sequelize.query(sql, options);
 
       return transactions;
+    }
+
+    static async getLoggedInUserTransaction (userId) {
+      const sql = `
+        select
+          t.id, t.consumer_id, u.email as customer_email, p.name as product_name, p.image_url, s.email as seller_email,
+          t.deal_price, t.deal_qty, t.payment_status, t.request_id, t.order_id, t.payment_type, t.disburse_status
+        from "Transactions" t
+          inner join "Users" u on u.id = t.consumer_id
+          inner join "Products" p on p.id = t.product_id
+          inner join "Users" s on s.id  = p.seller_id
+        where t.consumer_id = $consumer_id
+      `;
+      const options = {
+        bind: { consumer_id: userId },
+        type: QueryTypes.SELECT,
+        raw: true
+      };
+      const results = await sequelize.query(sql, options);
+
+      return results;
     }
   };
   Transactions.init({
