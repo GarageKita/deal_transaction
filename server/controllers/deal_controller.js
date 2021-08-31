@@ -6,8 +6,16 @@ const axios = require('axios');
 class Deal_Controller {
   static createDealTransaction = async (req, res, next) => {
     try {
-      const { consumer_id, product_id, deal_price, deal_qty, request_id } = req.body;
-      const data = { consumer_id, product_id, deal_price, deal_qty, request_id };
+      const { consumer_id, product_id, deal_price, deal_qty, request_id, address_id } = req.body;
+      const data = {
+        consumer_id, 
+        product_id,
+        deal_price,
+        deal_qty,
+        request_id,
+        address_id,
+        shipping_status: 'undeliver',
+      };
       const response = await axios.get(`${url}/products/${product_id}`);
       const { data: product } = response.data;
 
@@ -87,6 +95,34 @@ class Deal_Controller {
       return res.status(httpStatus).json({ message });
     } catch (error) {
       console.log('error deleteTransaction', error);
+      next(error);
+    }
+  };
+
+  static updateShippingStatus = async(req, res, next) => {
+    try {
+      const { id: transactionId } = req.params;
+      const payload = req.body;
+      const getTransaction = await Transactions.findByPk(transactionId);
+
+      if (!getTransaction) {
+        throw new CustomError('NotFound', `Transaction id ${transactionId} not found!`);
+      }
+
+      const field = {
+        shipping_status: payload.shipping_status,
+      };
+      const condition = {
+        where: { id: transactionId },
+        returning: true
+      }
+      const updateTransaction = await Transactions.update(field, condition);
+      
+      if (updateTransaction) {
+        res.status(200).json({ message: 'success', data: updateTransaction[1]});
+      }
+    } catch (error) {
+      console.log('error updateShippingStatus');
       next(error);
     }
   };
