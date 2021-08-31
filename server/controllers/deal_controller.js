@@ -20,15 +20,11 @@ class Deal_Controller {
       if (transaction) {
         return res.status(201).json({ message: 'Transaction Created', data: transaction });
       }
-    } catch (error) {
-      const { status, statusText } = error.response;
-      console.log('error on createDealTransaction', error.response);
+    } catch (err) {
+      console.log('error on createDealTransaction', err.name);
+      console.log(err);
 
-      if (status === 404) {
-        next({ name: 'NotFound', message: statusText });
-      }
-
-      next(error);
+      next(err);
     }
   };
 

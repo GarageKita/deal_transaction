@@ -151,7 +151,9 @@ module.exports = (sequelize, DataTypes) => {
     request_id: DataTypes.STRING,
     order_id: DataTypes.STRING,
     payment_type: DataTypes.STRING,
-    disburse_status: DataTypes.BOOLEAN
+    disburse_status: DataTypes.BOOLEAN,
+    shipping_status: DataTypes.STRING,
+    address_id: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Transactions',
