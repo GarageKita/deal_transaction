@@ -12,5 +12,6 @@ router.get('/me', Deal_Controller.getLoggedInUserTransaction);
 router.get('/:id', Deal_Controller.getAllUserTransaction);
 router.delete('/:id', Deal_Controller.deleteTransaction);
 router.patch('/:id', Deal_Controller.updateTransaction);
+router.patch('/shipping/:id', Deal_Controller.updateShippingStatus);
 
 module.exports = router;
