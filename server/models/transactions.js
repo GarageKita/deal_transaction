@@ -39,8 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       const queryParams = (id) ? 'where t.id = $id' : 'where 1=1';
       const sql = `
         select
-          t.id, t.consumer_id, u.email as customer_email, p.name as product_name, p.image_url, s.email as seller_email,
-          t.deal_price, t.deal_qty, t.payment_status, t.request_id, t.order_id, t.payment_type, t.disburse_status
+          t.*, u.email as customer_email, p.name as product_name, p.image_url, s.email as seller_email, p.description
         from "Transactions" t
           inner join "Users" u on u.id = t.consumer_id
           inner join "Products" p on p.id = t.product_id
@@ -147,10 +146,14 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
     request_id: DataTypes.STRING,
     order_id: DataTypes.STRING,
     payment_type: DataTypes.STRING,
-    disburse_status: DataTypes.BOOLEAN
+    disburse_status: DataTypes.BOOLEAN,
+    shipping_status: DataTypes.STRING,
+    address_id: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Transactions',

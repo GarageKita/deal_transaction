@@ -31,7 +31,6 @@ class PaymentController {
       const result = await snapPayment(total_payment, transactionId, [item]);
 
       if(result) {
-        console.log('masuk if');
         await Transactions.update({ order_id: transactionId }, {
           where: { id },
         });
@@ -71,8 +70,10 @@ class PaymentController {
             category_id: product.data.category_id
           };
           const updateProduct = await axios.put(`${url}/products/${checkTransaction.product_id}`, dataProduct, { headers });
-          const deleteRequest = await axios.delete(`${url}/requests/${checkTransaction.request_id}`, { headers });
-          const result = await Promise.all([updateProduct, deleteRequest]);
+          if (checkTransaction.request_id) {
+            await axios.delete(`${url}/requests/${checkTransaction.request_id}`, { headers });
+          }
+          const result = await Promise.all([updateProduct]);
 
           if (result) {
             await Transactions.update({ payment_status: 'paid', payment_type: payment_type}, {
