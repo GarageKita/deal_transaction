@@ -1,6 +1,7 @@
+if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 const { Transactions } = require('../models');
 const CustomError = require('../middlewares/error_handler');
-const url = 'https://garagekita-db-server.herokuapp.com';
+const url = (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') ? 'http://localhost:3000' : process.env.URL_MAIN_GARAGE_KITA;
 const axios = require('axios');
 
 class Deal_Controller {
