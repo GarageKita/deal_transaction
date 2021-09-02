@@ -78,6 +78,26 @@ module.exports = (sequelize, DataTypes) => {
 
       return results;
     }
+
+    static async getSellerTransaction (sellerId) {
+      const sql = `
+        select
+          t.*, u.email as customer_email, p.seller_id, p.name as product_name, p.image_url, s.email as seller_email, p.description
+        from "Transactions" t
+          inner join "Users" u on u.id = t.consumer_id
+          inner join "Products" p on p.id = t.product_id
+          inner join "Users" s on s.id  = p.seller_id
+        where p.seller_id = $sellerId
+      `;
+      const options = {
+        bind: { sellerId: sellerId },
+        type: QueryTypes.SELECT,
+        raw: true
+      };
+      const results = await sequelize.query(sql, options);
+
+      return results;
+    }
   };
   Transactions.init({
     consumer_id: {

@@ -78,6 +78,18 @@ class Deal_Controller {
     }
   };
 
+  static getSellerTransaction = async(req, res, next) => {
+    try {
+      const { consumer_id: seller_id } = req.currentState;
+      const sellerTransactions = await Transactions.getSellerTransaction(seller_id);
+      
+      res.status(200).json({ message: 'success', data: sellerTransactions });
+    } catch (error) {
+      console.log('error getSellerTransaction', error);
+      next(error)
+    }
+  }
+
   static deleteTransaction = async(req, res, next) => {
     try {
       const { id } = req.params;

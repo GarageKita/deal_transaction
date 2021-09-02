@@ -9,6 +9,7 @@ router.post('/', Deal_Controller.createDealTransaction);
 router.post('/payments/:id', PaymentController.processPayment);
 router.get('/', Deal_Controller.getAllUserTransaction);
 router.get('/me', Deal_Controller.getLoggedInUserTransaction);
+router.get('/seller', Deal_Controller.getSellerTransaction);
 router.get('/:id', Deal_Controller.getAllUserTransaction);
 router.delete('/:id', Deal_Controller.deleteTransaction);
 router.patch('/:id', Deal_Controller.updateTransaction);
